@@ -1,4 +1,4 @@
-package io.juserinput.processor;
+package io.juserinput;
 
 import jakarta.annotation.Nullable;
 import lombok.EqualsAndHashCode;

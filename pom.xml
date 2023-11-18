@@ -12,8 +12,9 @@
 
 		<lombok.version>1.18.30</lombok.version> <!-- If you use Java 21 locally, v1.18.30 is the minimum -->
 		<jakarta.annotation.version>2.1.1</jakarta.annotation.version>
-		<junit-jupiter.version>5.10.1</junit-jupiter.version>
+		<junit-jupiter.version>5.9.2</junit-jupiter.version>
 		<assertj.version>3.24.2</assertj.version>
+		<archunit.version>1.0.1</archunit.version>
 	</properties>
 
 	<dependencies>
@@ -36,9 +37,21 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<version>${junit-jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
 			<version>${assertj.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tngtech.archunit</groupId>
+			<artifactId>archunit</artifactId>
+			<version>${archunit.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
