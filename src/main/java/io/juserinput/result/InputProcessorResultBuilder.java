@@ -14,8 +14,8 @@ import jakarta.annotation.Nullable;
 public class InputProcessorResultBuilder<T> {
 
 	private final @Nonnull Input<T> input;
-	private @Nullable T currentValue;
 	private final @Nonnull String inputName;
+	private @Nullable T currentValue;
 	private final List<InputProcessorError> errors;
 
 	private InputProcessorResultBuilder(Input<T> input) {
@@ -34,7 +34,7 @@ public class InputProcessorResultBuilder<T> {
 	}
 
 	public Input<T> getCurrentInput() {
-		return Input.of(currentValue, inputName);
+		return Input.of(inputName, currentValue);
 	}
 
 	public T getCurrentValue() {
@@ -56,7 +56,7 @@ public class InputProcessorResultBuilder<T> {
 
 	public InputProcessorResult<T> build() {
 		return errors.isEmpty()
-			? new InputProcessorValidResult<>(currentValue, inputName)
+			? new InputProcessorValidResult<>(inputName, currentValue)
 			: new InputProcessorErrorResult<>(input, errors);
 	}
 

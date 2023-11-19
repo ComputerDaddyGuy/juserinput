@@ -29,7 +29,7 @@ class MappingInputProcessor<IN, INTER, OUT> implements InputProcessor<IN, OUT> {
 
 		try {
 			OUT outValue = interResult.asOptional().map(mappingFunction).orElse(null);
-			return new InputProcessorValidResult<>(outValue, input.getName());
+			return new InputProcessorValidResult<>(input.getName(), outValue);
 		} catch (Exception e) {
 			return new InputProcessorErrorResult<>(input, input.getName() + " is not a valid " + mappingFunction.getNewClassName());
 		}

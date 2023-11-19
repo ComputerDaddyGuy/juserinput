@@ -33,10 +33,10 @@ public sealed interface InputProcessorResult<OUT> {
 	@EqualsAndHashCode
 	public final class InputProcessorValidResult<OUT> implements InputProcessorResult<OUT> {
 
-		private final @Nullable OUT value;
 		private final @Nonnull String inputName;
+		private final @Nullable OUT value;
 
-		public InputProcessorValidResult(@Nullable OUT value, @Nonnull String inputName) {
+		public InputProcessorValidResult(@Nonnull String inputName, @Nullable OUT value) {
 			this.value = value;
 			this.inputName = Objects.requireNonNull(inputName, "inputName cannot be null");
 		}

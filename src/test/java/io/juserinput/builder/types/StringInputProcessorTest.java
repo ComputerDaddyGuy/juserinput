@@ -27,7 +27,7 @@ class StringInputProcessorTest {
 				.strip()
 				.build();
 
-			var result = proc.process(" test ", "myAttr");
+			var result = proc.process("myAttr", " test ");
 
 			Assertions.assertThat(result.asRequired()).isEqualTo("test");
 		}

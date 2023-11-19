@@ -15,8 +15,8 @@ public interface InputProcessor<IN, OUT> {
 
 	// -----------------------------------------------------------------------------------------------------------
 
-	public default InputProcessorResult<OUT> process(@Nullable IN value, @Nonnull String attrName) {
-		return process(Input.of(value, attrName));
+	public default InputProcessorResult<OUT> process(@Nonnull String attrName, @Nullable IN value) {
+		return process(Input.of(attrName, value));
 	}
 
 	public InputProcessorResult<OUT> process(@Nonnull Input<IN> input);

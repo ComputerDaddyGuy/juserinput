@@ -31,7 +31,7 @@ public class ConstraintsTestPerformer {
 		B builder, Function<B, B> contraintSetter, T value, String inputName, Consumer<InputProcessorResultAssert<T>> assertionConsumer
 	) {
 		var proc = contraintSetter.apply(builder).build();
-		var result = proc.process(value, inputName);
+		var result = proc.process(inputName, value);
 		assertionConsumer.accept(InputProcessorResultAssert.assertThat(result));
 	}
 
