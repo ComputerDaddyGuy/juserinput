@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
 @AllArgsConstructor
-public class SimpleMapper<OUT, NEW_OUT> implements Mapper<OUT, NEW_OUT> {
+public class SimpleMapFunction<OUT, NEW_OUT> implements MapFunction<OUT, NEW_OUT> {
 
 	private final @NonNull Class<NEW_OUT> newClass;
 	private final @NonNull Function<OUT, NEW_OUT> delegate;

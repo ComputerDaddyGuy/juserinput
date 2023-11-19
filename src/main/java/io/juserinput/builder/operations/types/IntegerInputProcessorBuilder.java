@@ -1,4 +1,4 @@
-package io.juserinput.builder.types;
+package io.juserinput.builder.operations.types;
 
 public class IntegerInputProcessorBuilder
 	extends AbstractIntegerInputProcessorBuilder<IntegerInputProcessorBuilder> {

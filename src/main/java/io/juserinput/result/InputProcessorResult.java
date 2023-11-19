@@ -43,6 +43,10 @@ public sealed interface InputProcessorResult<OUT> {
 			this.inputName = Objects.requireNonNull(inputName, "inputName cannot be null");
 		}
 
+		public InputProcessorValidResult(@Nonnull Input<OUT> input) {
+			this(input.getName(), input.getValue());
+		}
+
 		@Override
 		public String getName() {
 			return inputName;

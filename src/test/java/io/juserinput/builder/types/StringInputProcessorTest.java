@@ -10,16 +10,16 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import io.juserinput.InputProcessor;
-import io.juserinput.builder.operations.constraints.ConstraintsTestPerformer;
-import io.juserinput.builder.types.StringInputProcessorBuilder;
+import io.juserinput.builder.operations.types.StringInputProcessorBuilder;
+import io.juserinput.builder.operations.validators.ValidatorTestPerformer;
 
 class StringInputProcessorTest {
 
 	// ===========================================================================================================
-	// SANITIZERS
+	// TRANSFORMERS
 
 	@Nested
-	class Sanitizers {
+	class Transformation {
 
 		@Test
 		void strip() {
@@ -35,21 +35,21 @@ class StringInputProcessorTest {
 	}
 
 	// ===========================================================================================================
-	// CONSTRAINTS
+	// VALIDATORS
 
 	@Nested
-	class Constraints {
+	class Validation {
 
 		private static void performSringErrorTest(
 			Function<StringInputProcessorBuilder, StringInputProcessorBuilder> contraintSetter, String value, String inputName, String expectedErrorMessage
 		) {
-			ConstraintsTestPerformer.performErrorTest(InputProcessor.forString(), contraintSetter, value, inputName, expectedErrorMessage);
+			ValidatorTestPerformer.performErrorTest(InputProcessor.forString(), contraintSetter, value, inputName, expectedErrorMessage);
 		}
 
 		private static void performSringValidTest(
 			Function<StringInputProcessorBuilder, StringInputProcessorBuilder> contraintSetter, String value, String inputName
 		) {
-			ConstraintsTestPerformer.performValidTest(InputProcessor.forString(), contraintSetter, value, inputName);
+			ValidatorTestPerformer.performValidTest(InputProcessor.forString(), contraintSetter, value, inputName);
 		}
 
 		@Nested

@@ -1,15 +1,16 @@
-package io.juserinput.builder.types;
+package io.juserinput.builder.operations.types;
 
-import io.juserinput.builder.operations.AbstractObjectInputProcessorBuilder;
+import io.juserinput.builder.operations.AbstractObjectOperationInputProcessorBuilder;
 
-public abstract class AbstractStringInputProcessorBuilder<SELF extends AbstractStringInputProcessorBuilder<SELF>> extends AbstractObjectInputProcessorBuilder<SELF, String> {
+public abstract class AbstractStringInputProcessorBuilder<SELF extends AbstractStringInputProcessorBuilder<SELF>>
+	extends AbstractObjectOperationInputProcessorBuilder<SELF, String> {
 
 	protected AbstractStringInputProcessorBuilder(Class<?> selfType) {
-		super(String.class, selfType);
+		super(selfType);
 	}
 
 	// ===========================================================================================================
-	// SANITIZERS
+	// TRANSFORMERS
 
 	/**
 	 * Strips the input string.
@@ -17,18 +18,18 @@ public abstract class AbstractStringInputProcessorBuilder<SELF extends AbstractS
 	 * @return
 	 */
 	public SELF strip() {
-		return sanitize(s -> s.strip());
+		return transform(value -> value.strip());
 	}
 
 	// ===========================================================================================================
-	// CONSTRAINTS
+	// VALIDATORS
 
 	public SELF isNotEmpty() {
-		return constraint(s -> !s.isEmpty(), input -> input.getName() + " must not be empty");
+		return validate(value -> !value.isEmpty(), input -> input.getName() + " must not be empty");
 	}
 
 	public SELF isNotBlank() {
-		return constraint(s -> !s.isBlank(), input -> input.getName() + " must not be blank");
+		return validate(value -> !value.isBlank(), input -> input.getName() + " must not be blank");
 	}
 
 	// ===========================================================================================================

@@ -8,19 +8,19 @@ import io.juserinput.result.InputProcessorResult;
 import io.juserinput.result.InputProcessorResult.InputProcessorErrorResult;
 import io.juserinput.result.InputProcessorResult.InputProcessorValidResult;
 
-class MappingInputProcessor<IN, INTER, OUT> implements InputProcessor<IN, OUT> {
+class MappingInputProcessor<IN, OUT, NEW_OUT> implements InputProcessor<IN, NEW_OUT> {
 
-	private final InputProcessor<IN, INTER> priorProcessor;
-	private final Mapper<INTER, OUT> mappingFunction;
+	private final InputProcessor<IN, OUT> priorProcessor;
+	private final MapFunction<OUT, NEW_OUT> mappingFunction;
 
-	public MappingInputProcessor(InputProcessor<IN, INTER> priorProcessor, Mapper<INTER, OUT> mappingFunction) {
+	public MappingInputProcessor(InputProcessor<IN, OUT> priorProcessor, MapFunction<OUT, NEW_OUT> mappingFunction) {
 		super();
 		this.priorProcessor = Objects.requireNonNull(priorProcessor, "Prior processor cannot be null");
 		this.mappingFunction = Objects.requireNonNull(mappingFunction, "Mapping function cannot be null");
 	}
 
 	@Override
-	public InputProcessorResult<OUT> process(Input<IN> input) {
+	public InputProcessorResult<NEW_OUT> process(Input<IN> input) {
 		var interResult = priorProcessor.process(input);
 
 		if (interResult.hasError()) {
@@ -28,7 +28,7 @@ class MappingInputProcessor<IN, INTER, OUT> implements InputProcessor<IN, OUT> {
 		}
 
 		try {
-			OUT outValue = interResult.asOptional().map(mappingFunction).orElse(null);
+			NEW_OUT outValue = interResult.asOptional().map(mappingFunction).orElse(null);
 			return new InputProcessorValidResult<>(input.getName(), outValue);
 		} catch (Exception e) {
 			return new InputProcessorErrorResult<>(input, input.getName() + " is not a valid " + mappingFunction.getNewClassName());

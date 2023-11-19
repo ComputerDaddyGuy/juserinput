@@ -6,46 +6,38 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import io.juserinput.InputProcessor;
-import io.juserinput.builder.InputProcessorBuilder;
-import io.juserinput.builder.operations.constraints.Constraint;
+import io.juserinput.builder.operations.validators.Validator;
 
 /**
  * @param <IN>
  * @param <OUT>
  */
-public abstract class AbstractObjectInputProcessorBuilder<SELF extends AbstractObjectInputProcessorBuilder<SELF, T>, T>
-	implements InputProcessorBuilder<SELF, T, T, T> {
+public abstract class AbstractObjectOperationInputProcessorBuilder<SELF extends AbstractObjectOperationInputProcessorBuilder<SELF, T>, T>
+	implements InputOperationProcessorBuilder<SELF, T, T> {
 
-	protected final Class<T> inputType;
 	protected final SELF myself;
-
 	private final List<Operation<T>> operations;
 
 	@SuppressWarnings("unchecked")
-	protected AbstractObjectInputProcessorBuilder(Class<T> inputType, Class<?> selfType) {
-		this.inputType = Objects.requireNonNull(inputType, "inputType cannot be null");
+	protected AbstractObjectOperationInputProcessorBuilder(Class<?> selfType) {
 		this.myself = (SELF) Objects.requireNonNull(selfType, "selfType cannot be null").cast(this);
 		this.operations = new ArrayList<>();
-	}
-
-	public static <T> ObjectInputProcessorBuilder<T> forClass(Class<T> clazz) {
-		return new ObjectInputProcessorBuilder<>(clazz);
 	}
 
 	// -----------------------------------------------------------------------------------------------------------
 
 	@Override
-	public SELF sanitize(Function<T, T> sanitizeFunction) {
-		operations.add(new SanitizationOperation<>(sanitizeFunction));
+	public SELF transform(Function<T, T> transformFunction) {
+		operations.add(new TransformationOperation<>(transformFunction));
 		return myself;
 	}
 
 	// -----------------------------------------------------------------------------------------------------------
 
 	@Override
-	public SELF constraint(Constraint<T> constraint) {
-		Objects.requireNonNull(constraint, "constraint cannot be null");
-		operations.add(new ConstraintCheckOperation<>(constraint));
+	public SELF validate(Validator<T> validator) {
+		Objects.requireNonNull(validator, "validator cannot be null");
+		operations.add(new ValidationOperation<>(validator));
 		return myself;
 	}
 

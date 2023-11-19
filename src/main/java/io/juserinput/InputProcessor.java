@@ -1,9 +1,9 @@
 package io.juserinput;
 
 import io.juserinput.builder.ChainedInputProcessor;
-import io.juserinput.builder.operations.ObjectInputProcessorBuilder;
-import io.juserinput.builder.types.IntegerInputProcessorBuilder;
-import io.juserinput.builder.types.StringInputProcessorBuilder;
+import io.juserinput.builder.operations.ObjectOperationInputProcessorBuilder;
+import io.juserinput.builder.operations.types.IntegerInputProcessorBuilder;
+import io.juserinput.builder.operations.types.StringInputProcessorBuilder;
 import io.juserinput.result.InputProcessorResult;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -28,8 +28,9 @@ public interface InputProcessor<IN, OUT> {
 
 	// ===========================================================================================================
 
-	public static <T> ObjectInputProcessorBuilder<T> forClass(Class<T> clazz) {
-		return new ObjectInputProcessorBuilder<>(clazz);
+	@SuppressWarnings("unused")
+	public static <T> ObjectOperationInputProcessorBuilder<T> forClass(Class<T> clazz) {
+		return new ObjectOperationInputProcessorBuilder<>();
 	}
 
 	public static StringInputProcessorBuilder forString() {

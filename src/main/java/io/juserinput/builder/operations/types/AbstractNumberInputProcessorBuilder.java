@@ -1,16 +1,16 @@
-package io.juserinput.builder.types;
+package io.juserinput.builder.operations.types;
 
-import io.juserinput.builder.operations.AbstractObjectInputProcessorBuilder;
+import io.juserinput.builder.operations.AbstractObjectOperationInputProcessorBuilder;
 
 public abstract class AbstractNumberInputProcessorBuilder<SELF extends AbstractNumberInputProcessorBuilder<SELF, N>, N extends Number>
-	extends AbstractObjectInputProcessorBuilder<SELF, N> {
+	extends AbstractObjectOperationInputProcessorBuilder<SELF, N> {
 
-	protected AbstractNumberInputProcessorBuilder(Class<N> numberType, Class<?> selfType) {
-		super(numberType, selfType);
+	protected AbstractNumberInputProcessorBuilder(Class<?> selfType) {
+		super(selfType);
 	}
 
 	// ===========================================================================================================
-	// SANITIZERS
+	// TRANSFORMERS
 
 	/**
 	 * @return
@@ -18,7 +18,7 @@ public abstract class AbstractNumberInputProcessorBuilder<SELF extends AbstractN
 	public abstract SELF clamp(N min, N max);
 
 	// ===========================================================================================================
-	// CONSTRAINTS
+	// VALIDATORS
 
 	// ===========================================================================================================
 	// MAPPERS
