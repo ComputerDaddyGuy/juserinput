@@ -88,6 +88,27 @@ class InputProcessorTest {
 	}
 
 	@Nested
+	class Chaining {
+
+		@Test
+		void nominal() {
+			var proc1 = InputProcessor.forClass(String.class)
+				.sanitize(s -> s.trim())
+				.build();
+			var proc2 = InputProcessor.forClass(String.class)
+				.sanitize(s -> s.toUpperCase())
+				.build();
+
+			var actual = proc1.then(proc2).process("myAttr", " test ");
+
+			var expected = InputProcessorResultBuilder.newInstance(Input.of("myAttr", "TEST")).build();
+			InputProcessorResultAssert.assertThat(actual)
+				.isEqualTo(expected);
+		}
+
+	}
+
+	@Nested
 	class Mapping {
 
 		@Test

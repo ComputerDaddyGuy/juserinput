@@ -21,6 +21,8 @@ public sealed interface InputProcessorResult<OUT> {
 		return !isValid();
 	}
 
+	public Input<OUT> asInput();
+
 	public String getName();
 
 	public @Nonnull Optional<OUT> asOptional();
@@ -64,6 +66,11 @@ public sealed interface InputProcessorResult<OUT> {
 		@Override
 		public List<InputProcessorError> getErrors() {
 			return List.of();
+		}
+
+		@Override
+		public Input<OUT> asInput() {
+			return Input.of(getName(), value);
 		}
 
 	}
@@ -115,6 +122,11 @@ public sealed interface InputProcessorResult<OUT> {
 		@Override
 		public List<InputProcessorError> getErrors() {
 			return errors;
+		}
+
+		@Override
+		public Input<OUT> asInput() {
+			return Input.of(getName(), null);
 		}
 
 	}

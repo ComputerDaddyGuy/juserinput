@@ -1,5 +1,6 @@
 package io.juserinput;
 
+import io.juserinput.builder.ChainedInputProcessor;
 import io.juserinput.builder.operations.ObjectInputProcessorBuilder;
 import io.juserinput.builder.types.IntegerInputProcessorBuilder;
 import io.juserinput.builder.types.StringInputProcessorBuilder;
@@ -12,6 +13,10 @@ import jakarta.annotation.Nullable;
  * @param <OUT>
  */
 public interface InputProcessor<IN, OUT> {
+
+	public default <NEW_OUT> InputProcessor<IN, NEW_OUT> then(InputProcessor<OUT, NEW_OUT> then) {
+		return new ChainedInputProcessor<>(this, then);
+	}
 
 	// -----------------------------------------------------------------------------------------------------------
 
