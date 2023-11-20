@@ -15,8 +15,8 @@ public interface InputProcessorBuilder<SELF extends InputProcessorBuilder<SELF, 
 
 	// -----------------------------------------------------------------------------------------------------------
 
-	public static <S extends InputProcessorBuilder<S, T, T>, T> InputProcessorBuilder<S, T, T> noOp(Class<T> treatedType) {
-		return () -> new NoOpInputProcessor<>(treatedType);
+	public static <S extends InputProcessorBuilder<S, T, T>, T> InputProcessorBuilder<S, T, T> noOp(Class<T> treatedClass) {
+		return () -> new NoOpInputProcessor<>(treatedClass);
 	}
 
 }

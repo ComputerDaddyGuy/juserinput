@@ -12,15 +12,17 @@ import io.juserinput.builder.operations.validators.Validator;
  * @param <IN>
  * @param <OUT>
  */
-public abstract class AbstractObjectOperationInputProcessorBuilder<SELF extends AbstractObjectOperationInputProcessorBuilder<SELF, T>, T>
-	implements InputOperationProcessorBuilder<SELF, T, T> {
+public abstract class AbstractObjectOperationInputProcessorBuilder<SELF extends AbstractObjectOperationInputProcessorBuilder<SELF, IN, T>, IN, T>
+	implements InputOperationProcessorBuilder<SELF, IN, T> {
 
+	private final InputProcessor<IN, T> previous;
 	protected final SELF myself;
 	private final List<Operation<T>> operations;
 
 	@SuppressWarnings("unchecked")
-	protected AbstractObjectOperationInputProcessorBuilder(Class<?> selfType) {
-		this.myself = (SELF) Objects.requireNonNull(selfType, "selfType cannot be null").cast(this);
+	protected AbstractObjectOperationInputProcessorBuilder(InputProcessor<IN, T> previous, Class<?> selfType) {
+		this.previous = Objects.requireNonNull(previous, "Previous processor cannot be null");
+		this.myself = (SELF) Objects.requireNonNull(selfType, "Self type cannot be null").cast(this);
 		this.operations = new ArrayList<>();
 	}
 
@@ -44,8 +46,8 @@ public abstract class AbstractObjectOperationInputProcessorBuilder<SELF extends 
 	// -----------------------------------------------------------------------------------------------------------
 
 	@Override
-	public InputProcessor<T, T> build() {
-		return new InputOperationProcessor<>(operations);
+	public InputProcessor<IN, T> build() {
+		return previous.then(new InputOperationProcessor<>(operations));
 	}
 
 }

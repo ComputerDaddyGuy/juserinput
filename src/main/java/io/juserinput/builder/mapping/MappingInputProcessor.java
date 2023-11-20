@@ -8,7 +8,7 @@ import io.juserinput.result.InputProcessorResult;
 import io.juserinput.result.InputProcessorResult.InputProcessorErrorResult;
 import io.juserinput.result.InputProcessorResult.InputProcessorValidResult;
 
-class MappingInputProcessor<IN, OUT, NEW_OUT> implements InputProcessor<IN, NEW_OUT> {
+public class MappingInputProcessor<IN, OUT, NEW_OUT> implements InputProcessor<IN, NEW_OUT> {
 
 	private final InputProcessor<IN, OUT> priorProcessor;
 	private final MapFunction<OUT, NEW_OUT> mappingFunction;

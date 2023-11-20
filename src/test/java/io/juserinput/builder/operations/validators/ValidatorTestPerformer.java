@@ -11,15 +11,15 @@ import io.juserinput.result.InputProcessorResultAssert;
  */
 public class ValidatorTestPerformer {
 
-	public static <T, B extends InputOperationProcessorBuilder<?, T, T>> void performValidTest(B builder, Function<B, B> validatorSetter, T value, String inputName) {
+	public static <IN, T, B extends InputOperationProcessorBuilder<?, IN, T>> void performValidTest(B builder, Function<B, B> validatorSetter, IN value, String inputName) {
 		performValidationTest(
 			builder, validatorSetter, value, inputName,
 			resultAssert -> resultAssert.hasNoError()
 		);
 	}
 
-	public static <T, B extends InputOperationProcessorBuilder<?, T, T>> void performErrorTest(
-		B builder, Function<B, B> validatorSetter, T value, String inputName, String expectedErrorMsg
+	public static <IN, T, B extends InputOperationProcessorBuilder<?, IN, T>> void performErrorTest(
+		B builder, Function<B, B> validatorSetter, IN value, String inputName, String expectedErrorMsg
 	) {
 		performValidationTest(
 			builder, validatorSetter, value, inputName,
@@ -27,8 +27,8 @@ public class ValidatorTestPerformer {
 		);
 	}
 
-	private static <T, B extends InputOperationProcessorBuilder<?, T, T>> void performValidationTest(
-		B builder, Function<B, B> validatorSetter, T value, String inputName, Consumer<InputProcessorResultAssert<T>> assertionConsumer
+	private static <IN, T, B extends InputOperationProcessorBuilder<?, IN, T>> void performValidationTest(
+		B builder, Function<B, B> validatorSetter, IN value, String inputName, Consumer<InputProcessorResultAssert<T>> assertionConsumer
 	) {
 		var proc = validatorSetter.apply(builder).build();
 		var result = proc.process(inputName, value);

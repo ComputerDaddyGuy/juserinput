@@ -1,12 +1,15 @@
 package io.juserinput.builder.operations.types;
 
+import io.juserinput.InputProcessor;
+import io.juserinput.builder.mapping.MapFunction;
+import io.juserinput.builder.mapping.MappingInputProcessor;
 import io.juserinput.builder.operations.AbstractObjectOperationInputProcessorBuilder;
 
-public abstract class AbstractStringInputProcessorBuilder<SELF extends AbstractStringInputProcessorBuilder<SELF>>
-	extends AbstractObjectOperationInputProcessorBuilder<SELF, String> {
+public abstract class AbstractStringInputProcessorBuilder<SELF extends AbstractStringInputProcessorBuilder<SELF, IN>, IN>
+	extends AbstractObjectOperationInputProcessorBuilder<SELF, IN, String> {
 
-	protected AbstractStringInputProcessorBuilder(Class<?> selfType) {
-		super(selfType);
+	protected AbstractStringInputProcessorBuilder(InputProcessor<IN, String> previous, Class<?> selfType) {
+		super(previous, selfType);
 	}
 
 	// ===========================================================================================================
@@ -41,9 +44,10 @@ public abstract class AbstractStringInputProcessorBuilder<SELF extends AbstractS
 	// ===========================================================================================================
 	// MAPPERS
 
-//	public IntegerInputProcessorBuilder mapToInteger() {
-//		var mapper = new SimpleMapper<String, Integer>(Integer.class, Integer::parseInt);
-//		return new IntegerInputProcessorBuilder(mapper);
-//	}
+	public IntegerInputProcessorBuilder<IN> mapToInteger() {
+		MapFunction<String, Integer> mappingFunction = MapFunction.newInstance(Integer.class, Integer::parseInt);
+		InputProcessor<IN, Integer> previous = new MappingInputProcessor<>(this.build(), mappingFunction);
+		return new IntegerInputProcessorBuilder<>(previous);
+	}
 
 }

@@ -91,7 +91,7 @@ class InputProcessorTest {
 	class Chaining {
 
 		@Test
-		void nominal() {
+		void given_multipleTransformationProcessors_when_theyAreChained_then_allTransformationsAreApplied() {
 			var proc1 = InputProcessor.forClass(String.class)
 				.transform(s -> s.trim())
 				.build();
@@ -108,51 +108,51 @@ class InputProcessorTest {
 
 	}
 
-//	@Nested
-//	class Mapping {
-//
-//		@Test
-//		void null_isNot_mapped() {
-//			var proc = InputProcessor.forClass(String.class)
-//				.map(Long.class, Long::parseLong)
-//				.build();
-//
-//			var actual = proc.process("myAttr", null);
-//
-//			var expected = InputProcessorResultBuilder.newInstance(Input.of("myAttr", null)).build();
-//			InputProcessorResultAssert.assertThat(actual)
-//				.isEqualTo(expected);
-//		}
-//
-//		@Test
-//		void nominal() {
-//			var proc = InputProcessor.forClass(String.class)
-//				.map(Long.class, Long::parseLong)
-//				.build();
-//
-//			var actual = proc.process("myAttr", "3");
-//
-//			var expected = InputProcessorResultBuilder.newInstance(Input.of("myAttr", 3L)).build();
-//			InputProcessorResultAssert.assertThat(actual)
-//				.isEqualTo(expected);
-//		}
-//
-//		@Test
-//		void when_mappingFailed_then_error() {
-//			var proc = InputProcessor.forClass(String.class)
-//				.map(Long.class, Long::parseLong)
-//				.build();
-//
-//			var actual = proc.process(Input.of("myAttr", "notALong"));
-//
-//			var expected = InputProcessorResultBuilder
-//				.newInstance(Input.of("myAttr", "notALong"))
-//				.addError(InputProcessorError.newError("myAttr", "myAttr is not a valid Long"))
-//				.build();
-//			InputProcessorResultAssert.assertThat(actual)
-//				.isEqualTo(expected);
-//		}
-//
-//	}
+	@Nested
+	class Mapping {
+
+		@Test
+		void null_isNot_mapped() {
+			var proc = InputProcessor.forClass(String.class)
+				.map(Long.class, Long::parseLong)
+				.build();
+
+			var actual = proc.process("myAttr", null);
+
+			var expected = InputProcessorResultBuilder.newInstance(Input.of("myAttr", null)).build();
+			InputProcessorResultAssert.assertThat(actual)
+				.isEqualTo(expected);
+		}
+
+		@Test
+		void nominal() {
+			var proc = InputProcessor.forClass(String.class)
+				.map(Long.class, Long::parseLong)
+				.build();
+
+			var actual = proc.process("myAttr", "3");
+
+			var expected = InputProcessorResultBuilder.newInstance(Input.of("myAttr", 3L)).build();
+			InputProcessorResultAssert.assertThat(actual)
+				.isEqualTo(expected);
+		}
+
+		@Test
+		void when_mappingFailed_then_error() {
+			var proc = InputProcessor.forClass(String.class)
+				.map(Long.class, Long::parseLong)
+				.build();
+
+			var actual = proc.process(Input.of("myAttr", "notALong"));
+
+			var expected = InputProcessorResultBuilder
+				.newInstance(Input.of("myAttr", "notALong"))
+				.addError(InputProcessorError.newError("myAttr", "myAttr is not a valid Long"))
+				.build();
+			InputProcessorResultAssert.assertThat(actual)
+				.isEqualTo(expected);
+		}
+
+	}
 
 }

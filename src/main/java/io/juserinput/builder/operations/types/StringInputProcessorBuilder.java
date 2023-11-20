@@ -1,9 +1,16 @@
 package io.juserinput.builder.operations.types;
 
-public class StringInputProcessorBuilder extends AbstractStringInputProcessorBuilder<StringInputProcessorBuilder> {
+import io.juserinput.InputProcessor;
+import io.juserinput.builder.InputProcessorBuilder;
 
-	public StringInputProcessorBuilder() {
-		super(StringInputProcessorBuilder.class);
+public class StringInputProcessorBuilder<IN> extends AbstractStringInputProcessorBuilder<StringInputProcessorBuilder<IN>, IN> {
+
+	public StringInputProcessorBuilder(InputProcessor<IN, String> previous) {
+		super(previous, StringInputProcessorBuilder.class);
+	}
+
+	public static StringInputProcessorBuilder<String> newInstance() {
+		return new StringInputProcessorBuilder<>(InputProcessorBuilder.noOp(String.class).build());
 	}
 
 }

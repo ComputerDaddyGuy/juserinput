@@ -4,7 +4,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import io.juserinput.Input;
+import io.juserinput.InputProcessor;
 import io.juserinput.builder.InputProcessorBuilder;
+import io.juserinput.builder.mapping.MapFunction;
+import io.juserinput.builder.mapping.MappingInputProcessor;
 import io.juserinput.builder.operations.validators.Validator;
 
 /**
@@ -31,5 +34,18 @@ public interface InputOperationProcessorBuilder<SELF extends InputOperationProce
 	public SELF validate(Validator<T> validator);
 
 	// -----------------------------------------------------------------------------------------------------------
+
+	public default <OUT> ObjectOperationInputProcessorBuilder<IN, OUT> map(
+		Class<OUT> newOutClass, Function<T, OUT> mapFunction
+	) {
+		return map(MapFunction.newInstance(newOutClass, mapFunction));
+	}
+
+	public default <OUT> ObjectOperationInputProcessorBuilder<IN, OUT> map(
+		MapFunction<T, OUT> mapFunction
+	) {
+		InputProcessor<IN, OUT> previous = new MappingInputProcessor<>(this.build(), mapFunction);
+		return new ObjectOperationInputProcessorBuilder<>(previous);
+	}
 
 }

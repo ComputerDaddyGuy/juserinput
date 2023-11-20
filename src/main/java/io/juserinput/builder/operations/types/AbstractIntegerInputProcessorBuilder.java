@@ -1,10 +1,12 @@
 package io.juserinput.builder.operations.types;
 
-public abstract class AbstractIntegerInputProcessorBuilder<SELF extends AbstractIntegerInputProcessorBuilder<SELF>>
-	extends AbstractNumberInputProcessorBuilder<SELF, Integer> {
+import io.juserinput.InputProcessor;
 
-	protected AbstractIntegerInputProcessorBuilder(Class<?> selfType) {
-		super(selfType);
+public abstract class AbstractIntegerInputProcessorBuilder<SELF extends AbstractIntegerInputProcessorBuilder<SELF, IN>, IN>
+	extends AbstractNumberInputProcessorBuilder<SELF, IN, Integer> {
+
+	protected AbstractIntegerInputProcessorBuilder(InputProcessor<IN, Integer> previous, Class<?> selfType) {
+		super(previous, selfType);
 	}
 
 	// ===========================================================================================================

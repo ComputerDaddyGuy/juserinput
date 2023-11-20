@@ -28,17 +28,16 @@ public interface InputProcessor<IN, OUT> {
 
 	// ===========================================================================================================
 
-	@SuppressWarnings("unused")
-	public static <T> ObjectOperationInputProcessorBuilder<T> forClass(Class<T> clazz) {
-		return new ObjectOperationInputProcessorBuilder<>();
+	public static <T> ObjectOperationInputProcessorBuilder<T, T> forClass(Class<T> clazz) {
+		return ObjectOperationInputProcessorBuilder.newInstance(clazz);
 	}
 
-	public static StringInputProcessorBuilder forString() {
-		return new StringInputProcessorBuilder();
+	public static StringInputProcessorBuilder<String> forString() {
+		return StringInputProcessorBuilder.newInstance();
 	}
 
-	public static IntegerInputProcessorBuilder forInteger() {
-		return new IntegerInputProcessorBuilder();
+	public static IntegerInputProcessorBuilder<Integer> forInteger() {
+		return IntegerInputProcessorBuilder.newInstance();
 	}
 
 }
