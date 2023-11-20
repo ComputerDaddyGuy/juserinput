@@ -31,8 +31,8 @@ public class ValidatorTestPerformer {
 		B builder, Function<B, B> validatorSetter, IN value, String inputName, Consumer<InputProcessorResultAssert<T>> assertionConsumer
 	) {
 		var proc = validatorSetter.apply(builder).build();
-		var result = proc.process(inputName, value);
-		assertionConsumer.accept(InputProcessorResultAssert.assertThat(result));
+		var actual = proc.process(inputName, value);
+		assertionConsumer.accept(InputProcessorResultAssert.assertThat(actual));
 	}
 
 }

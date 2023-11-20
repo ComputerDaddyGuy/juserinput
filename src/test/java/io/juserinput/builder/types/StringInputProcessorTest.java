@@ -1,7 +1,9 @@
 package io.juserinput.builder.types;
 
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,12 +33,17 @@ class StringInputProcessorTest {
 
 		@Test
 		void strip() {
-			performSringTransformationTest(StringInputProcessorBuilder::strip, " test ", "test");
+			performSringTransformationTest(StringInputProcessorBuilder::strip, " tESt ", "tESt");
 		}
 
 		@Test
 		void toUpperCase() {
-			performSringTransformationTest(StringInputProcessorBuilder::toUpperCase, " test ", " TEST ");
+			performSringTransformationTest(StringInputProcessorBuilder::toUpperCase, " tESt ", " TEST ");
+		}
+
+		@Test
+		void toLowerCase() {
+			performSringTransformationTest(StringInputProcessorBuilder::toLowerCase, " TeST ", " test ");
 		}
 
 	}
@@ -81,8 +88,8 @@ class StringInputProcessorTest {
 
 			@ValueSource(strings = { " ", "\n", "\t" })
 			@ParameterizedTest
-			void given_blankValue_when_isEmptyCheck_then_error() {
-				performSringErrorTest(b -> b.isNotBlank(), " ", "myAttr", "myAttr must not be blank");
+			void given_blankValue_when_isEmptyCheck_then_error(String value) {
+				performSringErrorTest(b -> b.isNotBlank(), value, "myAttr", "myAttr must not be blank");
 			}
 
 			@NullSource
@@ -90,6 +97,117 @@ class StringInputProcessorTest {
 			@ParameterizedTest
 			void given_notBlankValue_when_isEmptyCheck_then_valid(String value) {
 				performSringValidTest(b -> b.isNotBlank(), value, "myAttr");
+			}
+
+		}
+
+		@Nested
+		class IsMinLength {
+
+			@Test
+			void negativeLength_throws_exception() {
+				Assertions.assertThatIllegalArgumentException()
+					.isThrownBy(() -> InputProcessor.forString().isMinLength(-1).build())
+					.withMessage("Invalid min length: must be positive or null, but is -1");
+			}
+
+			@ValueSource(strings = { "", " ", "ab" })
+			@ParameterizedTest
+			void given_invalidValue_when_isMinLength_then_error(String value) {
+				performSringErrorTest(b -> b.isMinLength(3), value, "myAttr", "The length of myAttr must be at least 3, but is " + value.length());
+			}
+
+			@NullSource
+			@ValueSource(strings = { "abc", "   " })
+			@ParameterizedTest
+			void given_validValue_when_isMinLength_then_valid(String value) {
+				performSringValidTest(b -> b.isMinLength(3), value, "myAttr");
+			}
+
+		}
+
+		@Nested
+		class IsMaxLength {
+
+			@Test
+			void negativeLength_throws_exception() {
+				Assertions.assertThatIllegalArgumentException()
+					.isThrownBy(() -> InputProcessor.forString().isMaxLength(-1).build())
+					.withMessage("Invalid max length: must be positive or null, but is -1");
+			}
+
+			@ValueSource(strings = { "abcd", "    " })
+			@ParameterizedTest
+			void given_invalidValue_when_isMaxLength_then_error(String value) {
+				performSringErrorTest(b -> b.isMaxLength(3), value, "myAttr", "The length of myAttr must not exceed 3, but is " + value.length());
+			}
+
+			@NullSource
+			@ValueSource(strings = { "", " ", "abc" })
+			@ParameterizedTest
+			void given_validValue_when_isMaxLength_then_valid(String value) {
+				performSringValidTest(b -> b.isMaxLength(3), value, "myAttr");
+			}
+
+		}
+
+		@Nested
+		class IsLengthBetween {
+
+			@Test
+			void negativeMinLength_throws_exception() {
+				Assertions.assertThatIllegalArgumentException()
+					.isThrownBy(() -> InputProcessor.forString().isLengthBetween(-1, 2).build())
+					.withMessage("Invalid min length or max length: must be positive or null, but min length is -1 and max length is 2");
+			}
+
+			@Test
+			void negativeMaxLength_throws_exception() {
+				Assertions.assertThatIllegalArgumentException()
+					.isThrownBy(() -> InputProcessor.forString().isLengthBetween(1, -2).build())
+					.withMessage("Invalid min length or max length: must be positive or null, but min length is 1 and max length is -2");
+			}
+
+			@Test
+			void minLengthGreaterThanMaxLength_throws_exception() {
+				Assertions.assertThatIllegalArgumentException()
+					.isThrownBy(() -> InputProcessor.forString().isLengthBetween(2, 1).build())
+					.withMessage("Min length must be greater than max length, but min length is 2 and max length is 1");
+			}
+
+			@ValueSource(strings = { "ab", "abcdef" })
+			@ParameterizedTest
+			void given_invalidValue_when_isLengthBetween_then_error(String value) {
+				performSringErrorTest(b -> b.isLengthBetween(3, 5), value, "myAttr", "The length of myAttr must be between 3 and 5, but is " + value.length());
+			}
+
+			@NullSource
+			@ValueSource(strings = { "abc", "abcd", "abcde", "ééééé" })
+			@ParameterizedTest
+			void given_validValue_when_isLengthBetween_then_valid(String value) {
+				performSringValidTest(b -> b.isLengthBetween(3, 5), value, "myAttr");
+			}
+
+		}
+
+		@Nested
+		class Matches {
+
+			@Test
+			void nullPattern_throws_exception() {
+				Assertions.assertThatIllegalArgumentException()
+					.isThrownBy(() -> InputProcessor.forString().matches(null).build())
+					.withMessage("Pattern is null");
+			}
+
+			@Test
+			void given_matchingValue_when_matchTest_then_valid() {
+				performSringValidTest(b -> b.matches(Pattern.compile("\\d+")), "123", "myAttr");
+			}
+
+			@Test
+			void given_notMatchingValue_when_matchTest__then_error() {
+				performSringErrorTest(b -> b.matches(Pattern.compile("\\d+")), "abc", "myAttr", "myAttr must match pattern: \\d+");
 			}
 
 		}
@@ -102,10 +220,16 @@ class StringInputProcessorTest {
 	@Nested
 	class Mappers {
 
-		private static <T> void performSringMappingTest(
+		private static <T> void performValidSringMappingTest(
 			Function<StringInputProcessorBuilder<String>, InputProcessorBuilder<?, String, T>> transformerSetter, String value, T expectedValue
 		) {
-			MappingTestPerformer.performMappingTest(InputProcessor.forString(), transformerSetter, value, expectedValue);
+			MappingTestPerformer.performSuccessMappingTest(InputProcessor.forString(), transformerSetter, "myAttr", value, expectedValue);
+		}
+
+		private static <T> void performErrorSringMappingTest(
+			Function<StringInputProcessorBuilder<String>, InputProcessorBuilder<?, String, T>> transformerSetter, String value, Class<T> clazz
+		) {
+			MappingTestPerformer.performErrorMappingTest(InputProcessor.forString(), transformerSetter, "myAttr", value, "myAttr is not a valid " + clazz.getSimpleName());
 		}
 
 		@Nested
@@ -113,7 +237,12 @@ class StringInputProcessorTest {
 
 			@Test
 			void nominal() {
-				performSringMappingTest(StringInputProcessorBuilder::mapToInteger, "42", 42);
+				performValidSringMappingTest(StringInputProcessorBuilder::mapToInteger, "42", 42);
+			}
+
+			@Test
+			void mappingFail() {
+				performErrorSringMappingTest(StringInputProcessorBuilder::mapToInteger, "notAnInteger", Integer.class);
 			}
 
 		}
