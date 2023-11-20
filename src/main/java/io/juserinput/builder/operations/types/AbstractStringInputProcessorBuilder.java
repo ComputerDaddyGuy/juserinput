@@ -12,13 +12,12 @@ public abstract class AbstractStringInputProcessorBuilder<SELF extends AbstractS
 	// ===========================================================================================================
 	// TRANSFORMERS
 
-	/**
-	 * Strips the input string.
-	 * 
-	 * @return
-	 */
 	public SELF strip() {
 		return transform(value -> value.strip());
+	}
+
+	public SELF toUpperCase() {
+		return transform(value -> value.toUpperCase());
 	}
 
 	// ===========================================================================================================
@@ -30,6 +29,13 @@ public abstract class AbstractStringInputProcessorBuilder<SELF extends AbstractS
 
 	public SELF isNotBlank() {
 		return validate(value -> !value.isBlank(), input -> input.getName() + " must not be blank");
+	}
+
+	public SELF isMaxLength(int maxLength) {
+		if (maxLength < 0) {
+			throw new IllegalArgumentException("Invalid max length, must be positive or nul: " + maxLength);
+		}
+		return validate(value -> value.length() <= maxLength, input -> input.getName() + " must be " + maxLength + " long max (currently: " + input.getValue().length() + ")");
 	}
 
 	// ===========================================================================================================
