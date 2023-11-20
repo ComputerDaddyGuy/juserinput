@@ -29,6 +29,10 @@ public class InputProcessorResultBuilder<T> {
 		return new InputProcessorResultBuilder<>(input);
 	}
 
+	public static <T> InputProcessorResultBuilder<T> newInstance(String inputName, T inputValue) {
+		return new InputProcessorResultBuilder<>(Input.of(inputName, inputValue));
+	}
+
 	public Input<T> getInitialInput() {
 		return input;
 	}

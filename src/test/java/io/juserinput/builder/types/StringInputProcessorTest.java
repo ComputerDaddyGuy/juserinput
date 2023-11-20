@@ -2,19 +2,18 @@ package io.juserinput.builder.types;
 
 import java.util.function.Function;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import io.juserinput.Input;
 import io.juserinput.InputProcessor;
+import io.juserinput.builder.InputProcessorBuilder;
+import io.juserinput.builder.mapping.MappingTestPerformer;
+import io.juserinput.builder.operations.transformers.TransformerTestPerformer;
 import io.juserinput.builder.operations.types.StringInputProcessorBuilder;
 import io.juserinput.builder.operations.validators.ValidatorTestPerformer;
-import io.juserinput.result.InputProcessorResultAssert;
-import io.juserinput.result.InputProcessorResultBuilder;
 
 class StringInputProcessorTest {
 
@@ -24,15 +23,20 @@ class StringInputProcessorTest {
 	@Nested
 	class Transformation {
 
+		private static void performSringTransformationTest(
+			Function<StringInputProcessorBuilder<String>, StringInputProcessorBuilder<String>> transformerSetter, String value, String expectedValue
+		) {
+			TransformerTestPerformer.performTransformationTest(InputProcessor.forString(), transformerSetter, value, expectedValue);
+		}
+
 		@Test
 		void strip() {
-			var proc = InputProcessor.forString()
-				.strip()
-				.build();
+			performSringTransformationTest(StringInputProcessorBuilder::strip, " test ", "test");
+		}
 
-			var actual = proc.process("myAttr", " test ");
-
-			Assertions.assertThat(actual.asRequired()).isEqualTo("test");
+		@Test
+		void toUpperCase() {
+			performSringTransformationTest(StringInputProcessorBuilder::toUpperCase, " test ", " TEST ");
 		}
 
 	}
@@ -44,15 +48,15 @@ class StringInputProcessorTest {
 	class Validation {
 
 		private static void performSringErrorTest(
-			Function<StringInputProcessorBuilder<String>, StringInputProcessorBuilder<String>> contraintSetter, String value, String inputName, String expectedErrorMessage
+			Function<StringInputProcessorBuilder<String>, StringInputProcessorBuilder<String>> validatorSetter, String value, String inputName, String expectedErrorMessage
 		) {
-			ValidatorTestPerformer.performErrorTest(InputProcessor.forString(), contraintSetter, value, inputName, expectedErrorMessage);
+			ValidatorTestPerformer.performErrorTest(InputProcessor.forString(), validatorSetter, value, inputName, expectedErrorMessage);
 		}
 
 		private static void performSringValidTest(
-			Function<StringInputProcessorBuilder<String>, StringInputProcessorBuilder<String>> contraintSetter, String value, String inputName
+			Function<StringInputProcessorBuilder<String>, StringInputProcessorBuilder<String>> validatorSetter, String value, String inputName
 		) {
-			ValidatorTestPerformer.performValidTest(InputProcessor.forString(), contraintSetter, value, inputName);
+			ValidatorTestPerformer.performValidTest(InputProcessor.forString(), validatorSetter, value, inputName);
 		}
 
 		@Nested
@@ -98,23 +102,18 @@ class StringInputProcessorTest {
 	@Nested
 	class Mappers {
 
+		private static <T> void performSringMappingTest(
+			Function<StringInputProcessorBuilder<String>, InputProcessorBuilder<?, String, T>> transformerSetter, String value, T expectedValue
+		) {
+			MappingTestPerformer.performMappingTest(InputProcessor.forString(), transformerSetter, value, expectedValue);
+		}
+
 		@Nested
 		class MapToInteger {
 
 			@Test
 			void nominal() {
-				var proc = InputProcessor.forString()
-					.mapToInteger()
-					.build();
-
-				var actual = proc.process("myAttr", "42");
-
-				var expected = InputProcessorResultBuilder
-					.newInstance(Input.of("myAttr", 42))
-					.build();
-
-				InputProcessorResultAssert.assertThat(actual)
-					.isEqualTo(expected);
+				performSringMappingTest(StringInputProcessorBuilder::mapToInteger, "42", 42);
 			}
 
 		}

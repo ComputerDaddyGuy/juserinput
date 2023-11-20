@@ -14,13 +14,29 @@ class InputProcessorTest {
 	class Transformation {
 
 		@Test
-		void null_isNot_transformed() {
+		void given_nullValue_when_transforming_then_transformationIsIgnored() {
 			var proc = InputProcessor.forClass(String.class)
 				.transform(s -> s.trim())
 				.build();
 
-			var expected = InputProcessorResultBuilder.newInstance(Input.of("myAttr", null)).build();
-			Assertions.assertThat(proc.process("myAttr", null)).isEqualTo(expected);
+			var actual = proc.process("myAttr", null);
+
+			var expected = InputProcessorResultBuilder.newInstance("myAttr", null).build();
+			Assertions.assertThat(actual)
+				.isEqualTo(expected);
+		}
+
+		@Test
+		void given_exceptionThrownInTransformer_when_transforming_then_exceptionIsActuallyThrown() {
+			var proc = InputProcessor.forClass(String.class)
+				.transform(s -> {
+					throw new NullPointerException("Test NPE");
+				})
+				.build();
+
+			Assertions.assertThatNullPointerException()
+				.isThrownBy(() -> proc.process("myAttr", "test"))
+				.withMessage("Test NPE");
 		}
 
 		@Test
@@ -29,8 +45,11 @@ class InputProcessorTest {
 				.transform(s -> s.trim())
 				.build();
 
-			var expected = InputProcessorResultBuilder.newInstance(Input.of("myAttr", "test")).build();
-			Assertions.assertThat(proc.process("myAttr", " test ")).isEqualTo(expected);
+			var actual = proc.process("myAttr", " test ");
+
+			var expected = InputProcessorResultBuilder.newInstance("myAttr", "test").build();
+			Assertions.assertThat(actual)
+				.isEqualTo(expected);
 		}
 
 	}
@@ -46,7 +65,7 @@ class InputProcessorTest {
 
 			var actual = proc.process("myAttr", null);
 
-			var expected = InputProcessorResultBuilder.newInstance(Input.of("myAttr", null)).build();
+			var expected = InputProcessorResultBuilder.newInstance("myAttr", null).build();
 			InputProcessorResultAssert.assertThat(actual)
 				.isEqualTo(expected);
 		}
@@ -57,10 +76,10 @@ class InputProcessorTest {
 				.validate(s -> false, "should starts with 'a'")
 				.build();
 
-			var actual = proc.process(Input.of("myAttr", "best"));
+			var actual = proc.process("myAttr", "best");
 
 			var expected = InputProcessorResultBuilder
-				.newInstance(Input.of("myAttr", "best"))
+				.newInstance("myAttr", "best")
 				.addError(InputProcessorError.newError("myAttr", "should starts with 'a'"))
 				.build();
 
@@ -74,10 +93,10 @@ class InputProcessorTest {
 				.validate(s -> false, input -> input.getName() + " should starts with 'a', but was '" + input.getValue() + "'")
 				.build();
 
-			var actual = proc.process(Input.of("myAttr", "best"));
+			var actual = proc.process("myAttr", "best");
 
 			var expected = InputProcessorResultBuilder
-				.newInstance(Input.of("myAttr", "best"))
+				.newInstance("myAttr", "best")
 				.addError(InputProcessorError.newError("myAttr", "myAttr should starts with 'a', but was 'best'"))
 				.build();
 
@@ -101,7 +120,7 @@ class InputProcessorTest {
 
 			var actual = proc1.then(proc2).process("myAttr", " test ");
 
-			var expected = InputProcessorResultBuilder.newInstance(Input.of("myAttr", "TEST")).build();
+			var expected = InputProcessorResultBuilder.newInstance("myAttr", "TEST").build();
 			InputProcessorResultAssert.assertThat(actual)
 				.isEqualTo(expected);
 		}
@@ -119,7 +138,7 @@ class InputProcessorTest {
 
 			var actual = proc.process("myAttr", null);
 
-			var expected = InputProcessorResultBuilder.newInstance(Input.of("myAttr", null)).build();
+			var expected = InputProcessorResultBuilder.newInstance("myAttr", null).build();
 			InputProcessorResultAssert.assertThat(actual)
 				.isEqualTo(expected);
 		}
@@ -132,7 +151,7 @@ class InputProcessorTest {
 
 			var actual = proc.process("myAttr", "3");
 
-			var expected = InputProcessorResultBuilder.newInstance(Input.of("myAttr", 3L)).build();
+			var expected = InputProcessorResultBuilder.newInstance("myAttr", 3L).build();
 			InputProcessorResultAssert.assertThat(actual)
 				.isEqualTo(expected);
 		}
@@ -143,10 +162,10 @@ class InputProcessorTest {
 				.map(Long.class, Long::parseLong)
 				.build();
 
-			var actual = proc.process(Input.of("myAttr", "notALong"));
+			var actual = proc.process("myAttr", "notALong");
 
 			var expected = InputProcessorResultBuilder
-				.newInstance(Input.of("myAttr", "notALong"))
+				.newInstance("myAttr", "notALong")
 				.addError(InputProcessorError.newError("myAttr", "myAttr is not a valid Long"))
 				.build();
 			InputProcessorResultAssert.assertThat(actual)
