@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import io.juserinput.processor.InputProcessor;
 import io.juserinput.processor.errors.InputProcessorError;
 import io.juserinput.processor.result.InputProcessorResultAssert;
 import io.juserinput.processor.result.InputProcessorResultBuilder;
@@ -22,7 +21,7 @@ class InputProcessorTest {
 
 			var actual = proc.process("myAttr", null);
 
-			var expected = InputProcessorResultBuilder.newInstance("myAttr", null).build();
+			var expected = InputProcessorResultBuilder.newInstance("myAttr", null, null).build();
 			Assertions.assertThat(actual)
 				.isEqualTo(expected);
 		}
@@ -48,7 +47,7 @@ class InputProcessorTest {
 
 			var actual = proc.process("myAttr", " test ");
 
-			var expected = InputProcessorResultBuilder.newInstance("myAttr", "test").build();
+			var expected = InputProcessorResultBuilder.newInstance("myAttr", " test ", "test").build();
 			Assertions.assertThat(actual)
 				.isEqualTo(expected);
 		}
@@ -66,7 +65,7 @@ class InputProcessorTest {
 
 			var actual = proc.process("myAttr", null);
 
-			var expected = InputProcessorResultBuilder.newInstance("myAttr", null).build();
+			var expected = InputProcessorResultBuilder.newInstance("myAttr", null, null).build();
 			InputProcessorResultAssert.assertThat(actual)
 				.isEqualTo(expected);
 		}
@@ -80,7 +79,7 @@ class InputProcessorTest {
 			var actual = proc.process("myAttr", "best");
 
 			var expected = InputProcessorResultBuilder
-				.newInstance("myAttr", "best")
+				.newInstance("myAttr", "best", "best")
 				.addError(InputProcessorError.newError("myAttr", "should starts with 'a'"))
 				.build();
 
@@ -97,7 +96,7 @@ class InputProcessorTest {
 			var actual = proc.process("myAttr", "best");
 
 			var expected = InputProcessorResultBuilder
-				.newInstance("myAttr", "best")
+				.newInstance("myAttr", "best", "best")
 				.addError(InputProcessorError.newError("myAttr", "myAttr should starts with 'a', but was 'best'"))
 				.build();
 
@@ -121,7 +120,7 @@ class InputProcessorTest {
 
 			var actual = proc1.then(proc2).process("myAttr", " test ");
 
-			var expected = InputProcessorResultBuilder.newInstance("myAttr", "TEST").build();
+			var expected = InputProcessorResultBuilder.newInstance("myAttr", " test ", "TEST").build();
 			InputProcessorResultAssert.assertThat(actual)
 				.isEqualTo(expected);
 		}
@@ -139,7 +138,7 @@ class InputProcessorTest {
 
 			var actual = proc.process("myAttr", null);
 
-			var expected = InputProcessorResultBuilder.newInstance("myAttr", null).build();
+			var expected = InputProcessorResultBuilder.newInstance("myAttr", null, null).build();
 			InputProcessorResultAssert.assertThat(actual)
 				.isEqualTo(expected);
 		}
@@ -152,7 +151,7 @@ class InputProcessorTest {
 
 			var actual = proc.process("myAttr", "3");
 
-			var expected = InputProcessorResultBuilder.newInstance("myAttr", 3L).build();
+			var expected = InputProcessorResultBuilder.newInstance("myAttr", "3", 3L).build();
 			InputProcessorResultAssert.assertThat(actual)
 				.isEqualTo(expected);
 		}
@@ -166,7 +165,7 @@ class InputProcessorTest {
 			var actual = proc.process("myAttr", "notALong");
 
 			var expected = InputProcessorResultBuilder
-				.newInstance("myAttr", "notALong")
+				.newInstance("myAttr", "notALong", "notALong")
 				.addError(InputProcessorError.newError("myAttr", "myAttr is not a valid Long"))
 				.build();
 			InputProcessorResultAssert.assertThat(actual)

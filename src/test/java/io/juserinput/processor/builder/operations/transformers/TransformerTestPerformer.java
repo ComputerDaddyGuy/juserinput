@@ -12,14 +12,14 @@ import io.juserinput.processor.result.InputProcessorResultBuilder;
 public class TransformerTestPerformer {
 
 	public static <IN, T, B extends InputOperationProcessorBuilder<?, IN, T>> void performTransformationTest(
-		B builder, Function<B, B> validatorSetter, IN value, T expectedValue
+		B builder, Function<B, B> validatorSetter, IN inputValue, T expectedValue
 	) {
 		var proc = validatorSetter.apply(builder).build();
 
-		var actual = proc.process("myAttr", value);
+		var actual = proc.process("myAttr", inputValue);
 
 		var expected = InputProcessorResultBuilder
-			.newInstance("myAttr", expectedValue)
+			.newInstance("myAttr", inputValue, expectedValue)
 			.build();
 
 		InputProcessorResultAssert.assertThat(actual)

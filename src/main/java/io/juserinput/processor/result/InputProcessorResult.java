@@ -1,7 +1,6 @@
 package io.juserinput.processor.result;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import io.juserinput.processor.Input;
@@ -9,130 +8,66 @@ import io.juserinput.processor.InputProcessorException;
 import io.juserinput.processor.errors.InputProcessorError;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 
-public sealed interface InputProcessorResult<OUT> {
+@ToString
+@EqualsAndHashCode
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class InputProcessorResult<IN, OUT> {
 
-	public boolean isValid();
+	private final @Nonnull Input<IN> input;
+	private final @NonNull List<InputProcessorError> errors;
+	private final @Nullable OUT value;
 
-	public default boolean hasError() {
+	public static <IN, OUT> InputProcessorResult<IN, OUT> valid(@Nonnull Input<IN> input, @Nullable OUT value) {
+		return new InputProcessorResult<IN, OUT>(input, List.of(), value);
+	}
+
+	public static <IN, OUT> InputProcessorResult<IN, OUT> error(@Nonnull Input<IN> input, List<InputProcessorError> errors) {
+		return new InputProcessorResult<>(input, errors, null);
+	}
+
+	public static <IN, OUT> InputProcessorResult<IN, OUT> error(@Nonnull Input<IN> input, InputProcessorError error) {
+		return error(input, List.of(error));
+	}
+
+	public static <IN, OUT> InputProcessorResult<IN, OUT> error(@Nonnull Input<IN> input, String errorMessage) {
+		return error(input, InputProcessorError.newError(input.getName(), errorMessage));
+	}
+
+	public boolean isValid() {
+		return errors.isEmpty();
+	}
+
+	public boolean hasError() {
 		return !isValid();
 	}
 
-	public Input<OUT> asInput();
-
-	public String getName();
-
-	public @Nonnull Optional<OUT> asOptional();
-
-	public @Nonnull OUT asRequired();
-
-	public @Nonnull List<InputProcessorError> getErrors();
-
-	@ToString
-	@EqualsAndHashCode
-	public final class InputProcessorValidResult<OUT> implements InputProcessorResult<OUT> {
-
-		private final @Nonnull String inputName;
-		private final @Nullable OUT value;
-
-		public InputProcessorValidResult(@Nonnull String inputName, @Nullable OUT value) {
-			this.value = value;
-			this.inputName = Objects.requireNonNull(inputName, "inputName cannot be null");
-		}
-
-		public InputProcessorValidResult(@Nonnull Input<OUT> input) {
-			this(input.getName(), input.getValue());
-		}
-
-		@Override
-		public String getName() {
-			return inputName;
-		}
-
-		@Override
-		public boolean isValid() {
-			return true;
-		}
-
-		@Override
-		public @Nonnull Optional<OUT> asOptional() {
-			return Optional.ofNullable(value);
-		}
-
-		@Override
-		public @Nonnull OUT asRequired() {
-			return asOptional().orElseThrow(() -> new InputProcessorNoValueException(inputName));
-		}
-
-		@Override
-		public List<InputProcessorError> getErrors() {
-			return List.of();
-		}
-
-		@Override
-		public Input<OUT> asInput() {
-			return Input.of(getName(), value);
-		}
-
+	public Input<OUT> asInput() {
+		return Input.of(getName(), value);
 	}
 
-	@ToString
-	@EqualsAndHashCode
-	public final class InputProcessorErrorResult<IN, OUT> implements InputProcessorResult<OUT> {
+	public String getName() {
+		return input.getName();
+	}
 
-		private final @Nonnull Input<IN> input;
-		private final @NonNull List<InputProcessorError> errors;
-
-		public InputProcessorErrorResult(@Nonnull Input<IN> input, List<InputProcessorError> errors) {
-			this.input = Objects.requireNonNull(input, "input cannot be null");
-			this.errors = Objects.requireNonNull(errors, "errors cannot be null");
-		}
-
-		public InputProcessorErrorResult(@Nonnull Input<IN> input, InputProcessorError error) {
-			this(input, List.of(error));
-		}
-
-		public InputProcessorErrorResult(@Nonnull Input<IN> input, String errorMessage) {
-			this(input, InputProcessorError.newError(input.getName(), errorMessage));
-		}
-
-		public Input<IN> getInput() {
-			return input;
-		}
-
-		@Override
-		public String getName() {
-			return input.getName();
-		}
-
-		@Override
-		public boolean isValid() {
-			return false;
-		}
-
-		@Override
-		public @Nonnull Optional<OUT> asOptional() {
+	public @Nonnull Optional<OUT> asOptional() {
+		if (hasError()) {
 			throw new InputProcessorException(getName(), errors);
 		}
+		return Optional.ofNullable(value);
+	}
 
-		@Override
-		public @Nonnull OUT asRequired() {
-			throw new InputProcessorException(getName(), errors);
-		}
+	public @Nonnull OUT asRequired() {
+		return asOptional().orElseThrow(() -> new InputProcessorNoValueException(getName()));
+	}
 
-		@Override
-		public List<InputProcessorError> getErrors() {
-			return errors;
-		}
-
-		@Override
-		public Input<OUT> asInput() {
-			return Input.of(getName(), null);
-		}
-
+	public @Nonnull List<InputProcessorError> getErrors() {
+		return errors;
 	}
 
 }

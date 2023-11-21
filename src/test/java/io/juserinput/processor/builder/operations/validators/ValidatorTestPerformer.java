@@ -28,7 +28,7 @@ public class ValidatorTestPerformer {
 	}
 
 	private static <IN, T, B extends InputOperationProcessorBuilder<?, IN, T>> void performValidationTest(
-		B builder, Function<B, B> validatorSetter, IN value, String inputName, Consumer<InputProcessorResultAssert<T>> assertionConsumer
+		B builder, Function<B, B> validatorSetter, IN value, String inputName, Consumer<InputProcessorResultAssert<IN, T>> assertionConsumer
 	) {
 		var proc = validatorSetter.apply(builder).build();
 		var actual = proc.process(inputName, value);

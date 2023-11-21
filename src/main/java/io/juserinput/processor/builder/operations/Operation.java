@@ -8,6 +8,6 @@ import jakarta.annotation.Nonnull;
  */
 interface Operation<T> {
 
-	public void operate(@Nonnull InputProcessorResultBuilder<T> resultBuilder);
+	public void operate(@Nonnull InputProcessorResultBuilder<?, T> resultBuilder);
 
 }

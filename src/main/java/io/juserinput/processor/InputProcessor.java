@@ -1,6 +1,5 @@
 package io.juserinput.processor;
 
-import io.juserinput.processor.builder.ChainedInputProcessor;
 import io.juserinput.processor.builder.operations.ObjectOperationInputProcessorBuilder;
 import io.juserinput.processor.builder.operations.types.IntegerInputProcessorBuilder;
 import io.juserinput.processor.builder.operations.types.StringInputProcessorBuilder;
@@ -20,11 +19,11 @@ public interface InputProcessor<IN, OUT> {
 
 	// -----------------------------------------------------------------------------------------------------------
 
-	public default InputProcessorResult<OUT> process(@Nonnull String attrName, @Nullable IN value) {
+	public default InputProcessorResult<IN, OUT> process(@Nonnull String attrName, @Nullable IN value) {
 		return process(Input.of(attrName, value));
 	}
 
-	public InputProcessorResult<OUT> process(@Nonnull Input<IN> input);
+	public InputProcessorResult<IN, OUT> process(@Nonnull Input<IN> input);
 
 	// ===========================================================================================================
 

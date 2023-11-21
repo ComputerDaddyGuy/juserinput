@@ -12,7 +12,7 @@ final class ValidationOperation<T> implements Operation<T> {
 	private final @NonNull Validator<T> validator;
 
 	@Override
-	public void operate(InputProcessorResultBuilder<T> resultBuilder) {
+	public void operate(InputProcessorResultBuilder<?, T> resultBuilder) {
 		var input = resultBuilder.getCurrentInput();
 		if (!validator.isValid(input)) {
 			resultBuilder.addError(InputProcessorError.newError(input.getName(), validator.errorMessage(input)));

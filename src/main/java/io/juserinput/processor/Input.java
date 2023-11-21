@@ -2,7 +2,9 @@ package io.juserinput.processor;
 
 import jakarta.annotation.Nullable;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+@ToString
 @EqualsAndHashCode
 public class Input<T> {
 

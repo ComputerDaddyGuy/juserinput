@@ -14,31 +14,31 @@ import io.juserinput.processor.result.InputProcessorResultBuilder;
 public class MappingTestPerformer {
 
 	public static <IN, T, B extends InputOperationProcessorBuilder<?, IN, IN>> void performErrorMappingTest(
-		B builder, Function<B, InputProcessorBuilder<?, IN, T>> mapperSetter, String inputName, IN value, String expectedErrorMsg
+		B builder, Function<B, InputProcessorBuilder<?, IN, T>> mapperSetter, String inputName, IN inputValue, String expectedErrorMsg
 	) {
 		performMappingTest(
-			builder, mapperSetter, value, inputName,
+			builder, mapperSetter, inputName, inputValue,
 			resultAssert -> resultAssert.hasError().containsExactlyErrorMessages(expectedErrorMsg)
 		);
 	}
 
 	public static <IN, T, B extends InputOperationProcessorBuilder<?, IN, IN>> void performSuccessMappingTest(
-		B builder, Function<B, InputProcessorBuilder<?, IN, T>> mapperSetter, String inputName, IN value, T expectedValue
+		B builder, Function<B, InputProcessorBuilder<?, IN, T>> mapperSetter, String inputName, IN inputValue, T expectedValue
 	) {
 		var expected = InputProcessorResultBuilder
-			.newInstance(inputName, expectedValue)
+			.newInstance(inputName, inputValue, expectedValue)
 			.build();
 		performMappingTest(
-			builder, mapperSetter, value, inputName,
+			builder, mapperSetter, inputName, inputValue,
 			resultAssert -> resultAssert.hasNoError().isEqualTo(expected)
 		);
 	}
 
 	private static <IN, T, B extends InputOperationProcessorBuilder<?, IN, IN>> void performMappingTest(
-		B builder, Function<B, InputProcessorBuilder<?, IN, T>> mapperSetter, IN value, String inputName, Consumer<InputProcessorResultAssert<T>> assertionConsumer
+		B builder, Function<B, InputProcessorBuilder<?, IN, T>> mapperSetter, String inputName, IN inputValue, Consumer<InputProcessorResultAssert<IN, T>> assertionConsumer
 	) {
 		var proc = mapperSetter.apply(builder).build();
-		var result = proc.process(inputName, value);
+		var result = proc.process(inputName, inputValue);
 		assertionConsumer.accept(InputProcessorResultAssert.assertThat(result));
 	}
 

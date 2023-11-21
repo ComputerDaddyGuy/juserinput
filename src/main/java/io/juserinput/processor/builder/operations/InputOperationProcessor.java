@@ -24,7 +24,7 @@ class InputOperationProcessor<T> implements InputProcessor<T, T> {
 	}
 
 	@Override
-	public InputProcessorResult<T> process(@Nonnull Input<T> input) {
+	public InputProcessorResult<T, T> process(@Nonnull Input<T> input) {
 		Objects.requireNonNull(input, "input to process cannot be null");
 		var result = InputProcessorResultBuilder.newInstance(input);
 

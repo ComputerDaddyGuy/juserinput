@@ -5,8 +5,6 @@ import java.util.Objects;
 import io.juserinput.processor.Input;
 import io.juserinput.processor.InputProcessor;
 import io.juserinput.processor.result.InputProcessorResult;
-import io.juserinput.processor.result.InputProcessorResult.InputProcessorErrorResult;
-import io.juserinput.processor.result.InputProcessorResult.InputProcessorValidResult;
 
 public class MappingInputProcessor<IN, OUT, NEW_OUT> implements InputProcessor<IN, NEW_OUT> {
 
@@ -20,18 +18,18 @@ public class MappingInputProcessor<IN, OUT, NEW_OUT> implements InputProcessor<I
 	}
 
 	@Override
-	public InputProcessorResult<NEW_OUT> process(Input<IN> input) {
+	public InputProcessorResult<IN, NEW_OUT> process(Input<IN> input) {
 		var interResult = priorProcessor.process(input);
 
 		if (interResult.hasError()) {
-			return new InputProcessorErrorResult<>(input, interResult.getErrors());
+			return InputProcessorResult.error(input, interResult.getErrors());
 		}
 
 		try {
 			NEW_OUT outValue = interResult.asOptional().map(mappingFunction).orElse(null);
-			return new InputProcessorValidResult<>(input.getName(), outValue);
+			return InputProcessorResult.valid(input, outValue);
 		} catch (Exception e) {
-			return new InputProcessorErrorResult<>(input, input.getName() + " is not a valid " + mappingFunction.getNewClassName());
+			return InputProcessorResult.error(input, input.getName() + " is not a valid " + mappingFunction.getNewClassName());
 		}
 	}
 

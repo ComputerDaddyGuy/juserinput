@@ -8,10 +8,6 @@ import java.util.function.Function;
 import io.juserinput.processor.InputProcessor;
 import io.juserinput.processor.builder.operations.validators.Validator;
 
-/**
- * @param <IN>
- * @param <OUT>
- */
 public abstract class AbstractObjectOperationInputProcessorBuilder<SELF extends AbstractObjectOperationInputProcessorBuilder<SELF, IN, T>, IN, T>
 	implements InputOperationProcessorBuilder<SELF, IN, T> {
 
